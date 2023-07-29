@@ -74,16 +74,18 @@ void SceneBlur::initScene()
 
     float weights[5], sum, sigma2 = 8.0f;
 
-    // Compute and sum the weights
+    // 计算和以及权重
     weights[0] = gauss(0,sigma2);
     sum = weights[0];
-    for( int i = 1; i < 5; i++ ) {
+    for( int i = 1; i < 5; i++ )
+    {
         weights[i] = gauss(float(i), sigma2);
         sum += 2 * weights[i];
     }
 
-    // Normalize the weights and set the uniform
-    for( int i = 0; i < 5; i++ ) {
+    // 归一化权重设置uniform变量
+    for( int i = 0; i < 5; i++ )
+    {
 		std::stringstream uniName;
 		uniName << "Weight[" << i << "]";
         float val = weights[i] / sum;
@@ -301,7 +303,7 @@ void SceneBlur::compileAndLinkShader()
 
 float SceneBlur::gauss(float x, float sigma2 )
 {
-	double coeff = 1.0 / (glm::two_pi<double>() * sigma2);
+	double coeff = 1.0 / sqrt(glm::two_pi<double>() * sigma2);
     double expon = -(x*x) / (2.0 * sigma2);
     return (float) (coeff*exp(expon));
 }
