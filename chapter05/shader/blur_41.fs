@@ -51,6 +51,7 @@ vec4 pass1()
     return vec4(phongModel( Position, Normal ),1.0);
 }
 
+//纵向求和模糊
 subroutine( RenderPassType )
 vec4 pass2()
 {
@@ -67,6 +68,7 @@ vec4 pass2()
     return sum;
 }
 
+//横向求和模糊
 subroutine( RenderPassType )
 vec4 pass3()
 {

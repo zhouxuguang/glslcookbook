@@ -69,6 +69,29 @@ void pass1()
     HdrColor = ads(Position, Normal); 
 }
 
+//aces算法矫正，效果个人觉得还可以
+vec3 aces_approx(vec3 v)
+{
+    v *= 0.6f;
+    float a = 2.51f;
+    float b = 0.03f;
+    float c = 2.43f;
+    float d = 0.59f;
+    float e = 0.14f;
+    return clamp((v*(a*v+b))/(v*(c*v+d)+e), 0.0f, 1.0f);
+}
+
+float aces_approx_1(float v)
+{
+    v *= 0.6f;
+    float a = 2.51f;
+    float b = 0.03f;
+    float c = 2.43f;
+    float d = 0.59f;
+    float e = 0.14f;
+    return clamp((v*(a*v+b))/(v*(c*v+d)+e), 0.0f, 1.0f);
+}
+
 // This pass computes the sum of the luminance of all pixels
 subroutine(RenderPassType)
 void pass2()
@@ -86,6 +109,7 @@ void pass2()
     // Apply the tone mapping operation to the luminance (xyYCol.z or xyzCol.y)
     float L = (Exposure * xyYCol.z) / AveLum;
     L = (L * ( 1 + L / (White * White) )) / ( 1 + L );
+    L = aces_approx_1(xyYCol.z);
 
     // Using the new luminance, convert back to XYZ
     xyzCol.x = (L * xyYCol.x) / (xyYCol.y);
@@ -94,7 +118,8 @@ void pass2()
 
     // Convert back to RGB and send to output buffer
     if( DoToneMap )
-      FragColor = vec4( xyz2rgb * xyzCol, 1.0);
+        FragColor = vec4( xyz2rgb * xyzCol, 1.0);
+        //FragColor = vec4(aces_approx(color.rgb), 1.0);
     else
       FragColor = color;
 }
