@@ -92,6 +92,38 @@ float aces_approx_1(float v)
     return clamp((v*(a*v+b))/(v*(c*v+d)+e), 0.0f, 1.0f);
 }
 
+//ACES_FULL算法，据说效果是最好的
+
+mat3 LinearToACES = mat3
+(
+    0.59719f, 0.07600f, 0.02840f,
+    0.35458f, 0.90834f, 0.13383f,
+    0.04823f, 0.01566f, 0.83777f
+);
+
+mat3 ACESToLinear = mat3
+(
+    1.60475f, -0.10208f, -0.00327f,
+    -0.53108f,  1.10813f, -0.07276f,
+    -0.07367f, -0.00605f,  1.07602f
+);
+
+
+vec3 rtt_and_odt_fit(vec3 col)
+{
+    vec3 a = col * (col + 0.0245786f) - 0.000090537f;
+    vec3 b = col * (0.983729f * col + 0.4329510f) + 0.238081f;
+    return a / b;
+}
+
+vec4 ACESFull(vec4 col)
+{
+    vec3 aces = LinearToACES * col.rgb;
+    aces = rtt_and_odt_fit(aces);
+    col.rgb = ACESToLinear * aces;
+    return col;
+}
+
 // This pass computes the sum of the luminance of all pixels
 subroutine(RenderPassType)
 void pass2()
@@ -118,10 +150,14 @@ void pass2()
 
     // Convert back to RGB and send to output buffer
     if( DoToneMap )
+    {
         FragColor = vec4( xyz2rgb * xyzCol, 1.0);
-        //FragColor = vec4(aces_approx(color.rgb), 1.0);
+        FragColor = ACESFull(color);
+    }
     else
-      FragColor = color;
+    {
+        FragColor = color;
+    }
 }
 
 void main() {

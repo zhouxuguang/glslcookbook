@@ -22,6 +22,8 @@ ingredients/libingredients.a
 chapter??/chapter??
 chapter??/chapter??.exe
 
+build/
+
 .idea/
 *.cbp
 
