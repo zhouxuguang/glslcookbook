@@ -82,7 +82,7 @@ void SceneHdrBloom::initScene()
     pass4Index = glGetSubroutineIndex( programHandle, GL_FRAGMENT_SHADER, "pass4");
     pass5Index = glGetSubroutineIndex( programHandle, GL_FRAGMENT_SHADER, "pass5");
 
-    prog.setUniform("LumThresh", 1.7f);
+    prog.setUniform("LumThresh", 2.1f);
 
     float weights[10], sum, sigma2 = 25.0f;
 
@@ -196,9 +196,12 @@ void SceneHdrBloom::update( float t )
 
 void SceneHdrBloom::render()
 {
+    //渲染到hdr纹理
     pass1();
     glFlush();
     computeLogAveLuminance();
+    
+    //提取亮度值
     pass2();
     glFlush();
     pass3();
@@ -210,28 +213,29 @@ void SceneHdrBloom::render()
 
 void SceneHdrBloom::computeLogAveLuminance()
 {
-   GLfloat *texData = new GLfloat[width*height*3];
-   glActiveTexture(GL_TEXTURE0);
-   glBindTexture(GL_TEXTURE_2D, hdrTex);
-   glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, texData);
-   float sum = 0.0f;
-   for( int i = 0; i < width * height; i++ ) {
-     float lum = glm::dot(
+    GLfloat *texData = new GLfloat[width*height*3];
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, hdrTex);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, texData);
+    float sum = 0.0f;
+    for( int i = 0; i < width * height; i++ )
+    {
+        float lum = glm::dot(
              glm::vec3(texData[i*3+0], texData[i*3+1], texData[i*3+2]),
              glm::vec3(0.2126f, 0.7152f, 0.0722f)
-     );
-     sum += logf( lum + 0.00001f );
-   }
+        );
+        sum += logf( lum + 0.00001f );
+    }
 
-   prog.setUniform( "AveLum", expf( sum / (width*height) ) );
-   delete [] texData;
+    prog.setUniform( "AveLum", expf( sum / (width*height) ) );
+    delete [] texData;
 }
 
 
 void SceneHdrBloom::pass1()
 {
-  glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-  glViewport(0,0,width,height);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glViewport(0,0,width,height);
 
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
