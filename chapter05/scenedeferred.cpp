@@ -79,11 +79,11 @@ void SceneDeferred::createGBufTex( GLenum texUnit, GLenum format, GLuint &texid 
     glActiveTexture(texUnit);
     glGenTextures(1, &texid);
     glBindTexture(GL_TEXTURE_2D, texid);
-#ifdef __APPLE__
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-#else
+//#ifdef __APPLE__
+//    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+//#else
     glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-#endif
+//#endif
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
