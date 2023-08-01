@@ -276,6 +276,11 @@ void ObjMesh::ObjMeshData::toGlMesh(GlMeshData & data) {
         auto it = vertexMap.find(vertStr);
         if( it == vertexMap.end() ) {
             auto vIdx = data.points.size() / 3;
+            
+            if (vert.pIdx < 0 || vert.nIdx < 0 || vert.tcIdx < 0)
+            {
+                continue;
+            }
 
             auto & pt = points[ vert.pIdx ];
             data.points.push_back( pt.x );

@@ -7,6 +7,7 @@
 #include "scenetonemap.h"
 #include "scenehdrbloom.h"
 #include "sceneoit.h"
+#include "scenessao.h"
 
 std::map<std::string, std::string> sceneInfo = {
         {"blur",      "Gaussian blur"},
@@ -16,7 +17,8 @@ std::map<std::string, std::string> sceneInfo = {
         {"msaa",      "multisample anti-aliasing"},
         {"tone-map",  "tone mapping example."},
         {"hdr-bloom", "bloom example with HDR tone mapping."},
-        {"oit",       "order independent transparency (requires OpenGL 4.3)"}
+        {"oit",       "order independent transparency (requires OpenGL 4.3)"},
+        {"ssao", "Screen space ambieng occlusion example"}
 };
 
 
@@ -40,6 +42,8 @@ int main(int argc, char *argv[]) {
         scene = std::unique_ptr<Scene>(new SceneToneMap());
     } else if (recipe == "hdr-bloom") {
         scene = std::unique_ptr<Scene>(new SceneHdrBloom());
+    } else if (recipe == "ssao") {
+        scene = std::unique_ptr<Scene>(new SceneSsao());
     } else if (recipe == "oit") {
 #ifdef __APPLE__
         printf("OIT example is not supported on MacOS.\n");
