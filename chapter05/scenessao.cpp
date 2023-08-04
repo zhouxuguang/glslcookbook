@@ -76,9 +76,12 @@ void SceneSsao::initScene()
 	setupFBO();
 
 //#ifdef __APPLE__
-	prog.setUniform("PositionTex", 0);
-	prog.setUniform("NormalTex", 1);
-	prog.setUniform("ColorTex", 2);
+    prog.setUniform("PositionTex", 0);
+    prog.setUniform("NormalTex", 1);
+    prog.setUniform("ColorTex", 2);
+    prog.setUniform("AoTex", 3);
+    prog.setUniform("RandTex", 4);
+    prog.setUniform("DiffTex", 5);
 //#endif
 }
 
