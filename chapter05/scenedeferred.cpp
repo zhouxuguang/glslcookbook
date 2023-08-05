@@ -69,10 +69,18 @@ void SceneDeferred::initScene()
     prog.setUniform("Light.Intensity", vec3(1.0f,1.0f,1.0f) );
 
 #ifdef __APPLE__
-    prog.setUniform("PositionTex", 0);
+    //prog.setUniform("PositionTex", 0);
     prog.setUniform("NormalTex", 1);
     prog.setUniform("ColorTex", 2);
+    prog.setUniform("DepthTex", 3);
 #endif
+    
+    //设置顶点坐标重建的参数
+    prog.setUniform("screenWidth", (float)width);
+    prog.setUniform("screenHeight", (float)height);
+    prog.setUniform("near", 0.3f);
+    prog.setUniform("far", 100.0f);
+    prog.setUniform("fov", glm::radians(60.0f));
 }
 
 void SceneDeferred::createGBufTex( GLenum texUnit, GLenum format, GLuint &texid ) {
@@ -94,18 +102,18 @@ void SceneDeferred::setupFBO()
     glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
 
     // Create the textures for position, normal and color
-    createGBufTex(GL_TEXTURE0, GL_RGB32F, posTex);  // Position
+    //createGBufTex(GL_TEXTURE0, GL_RGB32F, posTex);  // Position
     createGBufTex(GL_TEXTURE1, GL_RGB32F, normTex); // Normal
     createGBufTex(GL_TEXTURE2, GL_RGB8, colorTex);  // Color
     createGBufTex(GL_TEXTURE3, GL_DEPTH_COMPONENT32F, depthTex); //depth
 
     // Attach the textures to the framebuffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, posTex, 0);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, posTex, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normTex, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, colorTex, 0);
 
-    GLenum drawBuffers[] = {GL_NONE, GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+    GLenum drawBuffers[] = {GL_NONE, GL_NONE, GL_COLOR_ATTACHMENT1,
                         GL_COLOR_ATTACHMENT2};
     glDrawBuffers(4, drawBuffers);
 
