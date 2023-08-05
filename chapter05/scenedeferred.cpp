@@ -79,11 +79,7 @@ void SceneDeferred::createGBufTex( GLenum texUnit, GLenum format, GLuint &texid 
     glActiveTexture(texUnit);
     glGenTextures(1, &texid);
     glBindTexture(GL_TEXTURE_2D, texid);
-//#ifdef __APPLE__
-//    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-//#else
     glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-//#endif
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
@@ -91,24 +87,20 @@ void SceneDeferred::createGBufTex( GLenum texUnit, GLenum format, GLuint &texid 
 
 void SceneDeferred::setupFBO()
 {
-    GLuint depthBuf, posTex, normTex, colorTex;
+    GLuint posTex, normTex, colorTex, depthTex;
 
     // Create and bind the FBO
     glGenFramebuffers(1, &deferredFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
 
-    // The depth buffer
-    glGenRenderbuffers(1, &depthBuf);
-    glBindRenderbuffer(GL_RENDERBUFFER, depthBuf);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-
     // Create the textures for position, normal and color
     createGBufTex(GL_TEXTURE0, GL_RGB32F, posTex);  // Position
     createGBufTex(GL_TEXTURE1, GL_RGB32F, normTex); // Normal
     createGBufTex(GL_TEXTURE2, GL_RGB8, colorTex);  // Color
+    createGBufTex(GL_TEXTURE3, GL_DEPTH_COMPONENT32F, depthTex); //depth
 
     // Attach the textures to the framebuffer
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, posTex, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normTex, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, colorTex, 0);
