@@ -22,8 +22,6 @@ add_library(${target} STATIC ${ingredients_SOURCES})
 
 target_include_directories(${target} PUBLIC glad/include)
 
-target_link_libraries(${target} PUBLIC glm)
-
 set_property(TARGET ${target} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${target} PROPERTY CXX_STANDARD_REQUIRED ON)
 
