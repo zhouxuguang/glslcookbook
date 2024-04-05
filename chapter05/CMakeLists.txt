@@ -8,7 +8,8 @@ set( chapter05_SOURCES
 	scenemsaa.cpp
 	scenetonemap.cpp
 	scenehdrbloom.cpp
-		sceneoit.cpp)
+		sceneoit.cpp
+        scenessao.cpp)
 
 add_executable( chapter05 ${chapter05_SOURCES} )
 

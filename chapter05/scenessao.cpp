@@ -15,8 +15,8 @@ void SceneSsao::initScene()
 
 	glEnable(GL_DEPTH_TEST);
 
-	bunny = ObjMesh::load("../media/bs_ears.obj");
-	//bunny = ObjMesh::load("../media/dragon.obj");
+	//bunny = ObjMesh::load("../media/bs_ears.obj");
+	bunny = ObjMesh::load("../media/dragon.obj");
 
 	float c = 1.5f;
 
@@ -112,11 +112,7 @@ void SceneSsao::createGBufTex(GLenum texUnit, GLenum format, GLuint &texid) {
 	glActiveTexture(texUnit);
 	glGenTextures(1, &texid);
 	glBindTexture(GL_TEXTURE_2D, texid);
-//#ifdef __APPLE__
-//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-//#else
 	glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-//#endif
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
@@ -344,8 +340,8 @@ void SceneSsao::compileAndLinkShader()
 //		prog.compileShader("shader/deferred_41.vs");
 //		prog.compileShader("shader/deferred_41.fs");
 //#else
-		prog.compileShader("shader/ssao.vs");
-		prog.compileShader("shader/ssao.fs");
+		prog.compileShader("shader/ssao.vert");
+		prog.compileShader("shader/ssao.frag");
 //#endif
 		prog.link();
 		prog.use();
